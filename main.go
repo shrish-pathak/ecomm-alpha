@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ecomm-alpha/database"
 	"log"
 
 	"ecomm-alpha/router"
@@ -10,6 +11,7 @@ import (
 
 func main() {
 	app := fiber.New()
+	database.ConnectDB()
 	router.SetupRoutes(app)
 	log.Fatal(app.Listen(":5000"))
 }
