@@ -1,8 +1,10 @@
 package config
 
 import (
-	"fmt"
+	"log"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -10,9 +12,18 @@ import (
 // Config func to get env value
 func Config(key string) string {
 	// load .env file
-	err := godotenv.Load(".env")
+	fp, err := filepath.Abs(".env")
+	if strings.Contains(fp, "tests\\sellertests\\.env") {
+		fp, err = filepath.Abs("../../.env")
+	}
+
 	if err != nil {
-		fmt.Print("Error loading .env file")
+		log.Print(err)
+	}
+	err = godotenv.Load(fp)
+	if err != nil {
+		log.Print(err)
+		log.Print("Error loading .env file")
 	}
 	return os.Getenv(key)
 }

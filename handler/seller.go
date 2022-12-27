@@ -4,6 +4,7 @@ import (
 	"ecomm-alpha/config"
 	"ecomm-alpha/database"
 	"ecomm-alpha/models"
+	"log"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,27 +16,48 @@ func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
-func CreateSellarAccount(c *fiber.Ctx) error {
+
+type SellerSignUpDetails struct {
+	models.Seller
+	ConfirmPassword string
+}
+
+func CreateSellerAccount(c *fiber.Ctx) error {
 	db := database.DB
 
-	seller := new(models.Seller)
-
-	if err := c.BodyParser(seller); err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
+	sellerSUD := new(SellerSignUpDetails)
+	var statusCode int
+	if err := c.BodyParser(sellerSUD); err != nil {
+		statusCode = GetStatusCodeFromError(err)
+		if err != nil {
+			log.Println(err)
+		}
+		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
-	hash, err := hashPassword(seller.Password)
+	if ok, errorFields := validateSellerSignUpInput(sellerSUD); ok != true {
+		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
+	}
+
+	var email string
+
+	db.Raw("SELECT email FROM sellers where email = ?", sellerSUD.Email).Scan(&email)
+
+	if email != "" {
+		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "user already exists", Data: nil})
+	}
+	hash, err := hashPassword(sellerSUD.Password)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't hash password", "data": err})
-
+		log.Println(err)
+		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
-	seller.Password = hash
+	sellerSUD.Password = hash
 
-	if err := db.Create(&seller).Error; err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": err})
+	seller := &sellerSUD.Seller
+	if err := db.Create(seller).Error; err != nil {
+		log.Println(err)
+		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
-
-	//TODO: create token and return response with login token
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
@@ -48,6 +70,6 @@ func CreateSellarAccount(c *fiber.Ctx) error {
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	return c.JSON(fiber.Map{"status": "success", "message": "Success login", "data": t})
+	return c.Status(201).JSON(ResponseHTTP{Success: true, Message: "", Data: t})
 
 }

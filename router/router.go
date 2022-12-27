@@ -9,4 +9,11 @@ import (
 func SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	api.Get("/", handler.Hello)
+	v1 := api.Group("/v1")
+	seller := v1.Group("/seller")
+	seller.Post("/signup", handler.CreateSellerAccount)
+
+	store := v1.Group("/store")
+
+	store.Post("/", handler.CreateStore)
 }
