@@ -19,9 +19,22 @@ func hashPassword(password string) (string, error) {
 
 type SellerSignUpDetails struct {
 	models.Seller
-	ConfirmPassword string
+	ConfirmPassword string `json:"confirmPassword" example:"har!@#ryp#$otter123!@#"`
 }
 
+// CreateSellerAccount creates a seller account
+//
+//	@Summary		Register a new seller data
+//	@Description	Register seller
+//	@Tags
+//	@Accept			json
+//	@Produce		json
+//	@Param			seller body SellerSignUpDetails	true "Register seller"
+//	@Success		200	{object}	ResponseHTTP{data=string}
+//	Failure			400	{object}	ResponseHTTP{}
+//	Failure			422	{object}	ResponseHTTP{}
+//	Failure			500	{object}	ResponseHTTP{}
+//	@Router			/api/v1/seller/signup [post]
 func CreateSellerAccount(c *fiber.Ctx) error {
 	db := database.DB
 
@@ -41,7 +54,7 @@ func CreateSellerAccount(c *fiber.Ctx) error {
 
 	var email string
 
-	db.Raw("SELECT email FROM sellers where email = ?", sellerSUD.Email).Scan(&email)
+	db.Exec("SELECT email FROM sellers where email = ?", sellerSUD.Email).Scan(&email)
 
 	if email != "" {
 		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "user already exists", Data: nil})

@@ -2,6 +2,7 @@ package router
 
 import (
 	"ecomm-alpha/handler"
+	"ecomm-alpha/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,5 +16,7 @@ func SetupRoutes(app *fiber.App) {
 
 	store := v1.Group("/store")
 
-	store.Post("/", handler.CreateStore)
+	store.Post("/", middleware.Protected(), handler.CreateStore)
+	store.Put("/", handler.UpdateStore)
+	store.Patch("/", handler.UpdateStore)
 }

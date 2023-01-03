@@ -16,7 +16,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func Test_CreateSellerAccount(t *testing.T) {
+func Test_CreateStore(t *testing.T) {
 	testInputs := prepareCreateSellerAccountTestInputs()
 	for caseNum, testInput := range *testInputs {
 		t.Run(testInput.Description, func(t *testing.T) {

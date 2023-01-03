@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"ecomm-alpha/models"
 	"net/mail"
 	"reflect"
 )
@@ -27,9 +28,24 @@ func validateSellerSignUpInput(ssd *SellerSignUpDetails) (bool, []string) {
 
 	if len(errorFields) > 0 {
 		return false, errorFields
-	} else {
-		return true, errorFields
 	}
+	return true, errorFields
+}
+
+func validateStoreInput(s *models.Store) (bool, []string) {
+	errorFields := []string{}
+
+	if s.Name == "" {
+		errorFields = append(errorFields, "name")
+	}
+	if s.Description == "" {
+		errorFields = append(errorFields, "description")
+	}
+
+	if len(errorFields) > 0 {
+		return false, errorFields
+	}
+	return true, errorFields
 }
 
 func GetStatusCodeFromError(err error) int {

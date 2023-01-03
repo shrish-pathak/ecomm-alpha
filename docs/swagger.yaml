@@ -1,0 +1,65 @@
+basePath: /swagger/
+definitions:
+  handler.ResponseHTTP:
+    properties:
+      data: {}
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  handler.SellerSignUpDetails:
+    properties:
+      confirmPassword:
+        type: string
+      email:
+        example: harry@gmail.com
+        type: string
+      fullName:
+        example: harry potter
+        type: string
+      password:
+        example: har!@#ryp#$otter123!@#
+        type: string
+    type: object
+host: localhost:5000
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is the documentation for Ecomm-Alpha
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Ecomm-Alpha
+  version: "1.0"
+paths:
+  /api/v1/seller/signup:
+    post:
+      consumes:
+      - application/json
+      description: Register seller
+      parameters:
+      - description: Register seller
+        in: body
+        name: seller
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SellerSignUpDetails'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Register a new seller data
+      tags:
+      - ""
+swagger: "2.0"

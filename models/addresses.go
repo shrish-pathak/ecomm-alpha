@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 // Addresses struct
 type Addresses struct {
-	gorm.Model
+	gorm.Model   `json:"-"`
 	UserID       string `gorm:"not null" json:"userID"`
 	Mobile_No    int    `gorm:"not null" json:"mobileNo"`
 	City         string `gorm:"not null" json:"city"`

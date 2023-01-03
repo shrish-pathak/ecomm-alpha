@@ -6,7 +6,10 @@ import (
 
 	"ecomm-alpha/router"
 
+	_ "ecomm-alpha/docs"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/swagger"
 )
 
@@ -22,6 +25,7 @@ import (
 // @BasePath /swagger/
 func main() {
 	app := fiber.New()
+	app.Use(recover.New())
 	database.ConnectDB()
 	app.Get("/swagger/*", swagger.HandlerDefault)
 	router.SetupRoutes(app)
