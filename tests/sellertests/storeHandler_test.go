@@ -2,31 +2,24 @@ package sellertests
 
 import (
 	"bytes"
-	"ecomm-alpha/config"
-	"ecomm-alpha/database"
-	"ecomm-alpha/models"
 	"ecomm-alpha/tests/utility"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"reflect"
 	"testing"
-
-	"github.com/golang-jwt/jwt/v4"
 )
 
 func Test_CreateStore(t *testing.T) {
-	testInputs := prepareCreateSellerAccountTestInputs()
-	for caseNum, testInput := range *testInputs {
+	testInputs := prepareCreateStoreTestInputs()
+	for _, testInput := range *testInputs {
 		t.Run(testInput.Description, func(t *testing.T) {
-			sellerSignUpDetails := testInput.SellerSignUpDetails
-			sellerSUDByte, err := json.Marshal(sellerSignUpDetails)
+			store := testInput.Store
+			storeByte, err := json.Marshal(store)
 			if err != nil {
 				t.Error(err)
 			}
-			payload := bytes.NewBuffer(sellerSUDByte)
-			req, err := http.NewRequest("POST", utility.BaseUrl+testInput.RequestRoutePath, payload)
+			payload := bytes.NewBuffer(storeByte)
+			req, err := http.NewRequest(testInput.RequestMethod, utility.BaseUrl+testInput.RequestRoutePath, payload)
 			for _, header := range testInput.RequestHeaders {
 				for k, v := range header {
 					req.Header.Set(k, v)
@@ -36,6 +29,7 @@ func Test_CreateStore(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
+
 			res, statusCode, err := utility.GetResponse(req)
 
 			if testInput.ExpectedResponseStatusCode != statusCode {
@@ -45,25 +39,6 @@ func Test_CreateStore(t *testing.T) {
 				return
 			}
 
-			if caseNum == 0 {
-				tokenString := res.(map[string]interface{})["data"].(string)
-
-				token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-					// Don't forget to validate the alg is what you expect:
-					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-						return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-					}
-
-					return []byte(config.Config("SECRET")), nil
-				})
-
-				if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-					log.Println(claims)
-				} else {
-					t.Error("token validation error: ", err)
-				}
-				return
-			}
 			if reflect.DeepEqual(testInput.ExpectedResponseBody, res) == false {
 				t.Error("wrong response body")
 				t.Error("expected: ", testInput.ExpectedResponseBody)
@@ -72,12 +47,4 @@ func Test_CreateStore(t *testing.T) {
 		})
 	}
 
-	database.ConnectDB()
-	db := database.DB
-	testUser := new(models.Seller)
-	db.Exec("delete from sellers where email = ? returning *;", (*testInputs)[0].Email).Scan(&testUser)
-
-	if testUser == nil {
-		t.Error("failed to delete test user signup details")
-	}
 }
