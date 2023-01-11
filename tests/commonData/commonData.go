@@ -9,8 +9,9 @@ var (
 )
 
 func init() {
-	Seller.Email = "harry@gmail.com"
-	Seller.FullName = "harry potter"
-	Seller.Password = "expecto patronum"
-	Seller.ConfirmPassword = "expecto patronum"
+	//change credentials according to your needs
+	Seller.Email = "harry2@gmail.com"
+	Seller.FullName = "harry potter2"
+	Seller.Password = "123456"
+	
 }

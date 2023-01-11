@@ -54,8 +54,12 @@ func CreateSellerAccount(c *fiber.Ctx) error {
 
 	var email string
 
-	db.Exec("SELECT email FROM sellers where email = ?", sellerSUD.Email).Scan(&email)
+	err := db.Raw("SELECT email FROM sellers where email = ?", sellerSUD.Email).Scan(&email).Error
 
+	if err != nil {
+		log.Println(err)
+		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+	}
 	if email != "" {
 		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "user already exists", Data: nil})
 	}

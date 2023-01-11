@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func login(email, password string) string {
+func Login(email, password string) string {
 	client := new(http.Client)
 
 	loginData := map[string]string{
@@ -21,6 +21,7 @@ func login(email, password string) string {
 	}
 	payload := bytes.NewBuffer(LDBytes)
 	req, err := http.NewRequest("POST", BaseUrl+"/seller/login", payload)
+	req.Header.Set("Content-Type", "application/json")
 	if err != nil {
 		log.Println(err)
 	}

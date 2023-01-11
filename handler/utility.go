@@ -10,6 +10,7 @@ func isEmail(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil
 }
+
 func validateSellerSignUpInput(ssd *SellerSignUpDetails) (bool, []string) {
 	errorFields := []string{}
 
@@ -40,6 +41,22 @@ func validateStoreInput(s *models.Store) (bool, []string) {
 	}
 	if s.Description == "" {
 		errorFields = append(errorFields, "description")
+	}
+
+	if len(errorFields) > 0 {
+		return false, errorFields
+	}
+	return true, errorFields
+}
+
+func validateSellerLoginInput(sc *SellerCredentials) (bool, []string) {
+	errorFields := []string{}
+
+	if isEmail(sc.Email) == false {
+		errorFields = append(errorFields, "email")
+	}
+	if sc.Password == "" {
+		errorFields = append(errorFields, "password")
 	}
 
 	if len(errorFields) > 0 {

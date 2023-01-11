@@ -85,9 +85,9 @@ func UpdateStore(c *fiber.Ctx) error {
 	// log.Println(store)
 
 	var storeId string
-	db.Exec("update store set name=?,description=? where id =? returning id;", store.Name, store.Description, store.ID).Scan(&storeId)
-
-	if storeId == "" {
+	err := db.Raw("update store set name=?,description=? where id =? returning id;", store.Name, store.Description, store.ID).Scan(&storeId).Error
+	if err != nil {
+		log.Println(err)
 		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 
@@ -127,10 +127,10 @@ func PatchStoreName(c *fiber.Ctx) error {
 
 	var storeId string
 
-	db.Exec("update store set name=?,where id=? returning id", store.Name, store.ID).Scan(&storeId)
+	err := db.Raw("update store set name=?,where id=? returning id", store.Name, store.ID).Scan(&storeId).Error
 	log.Println(store)
 
-	if storeId == "" {
+	if err != nil {
 		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 	return c.Status(200).JSON(ResponseHTTP{Success: true, Message: "", Data: storeId})
@@ -169,9 +169,11 @@ func PatchStoreDescription(c *fiber.Ctx) error {
 
 	var storeId string
 
-	db.Exec("update store set description=?,where id=? returning id", store.Description, store.ID).Scan(&storeId)
-	if storeId == "" {
+	err := db.Raw("update store set description=?,where id=? returning id", store.Description, store.ID).Scan(&storeId).Error
+
+	if err != nil {
 		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
+
 	return c.JSON(ResponseHTTP{Success: true, Message: "", Data: store})
 }

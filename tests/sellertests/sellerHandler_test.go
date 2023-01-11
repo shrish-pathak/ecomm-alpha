@@ -75,9 +75,10 @@ func Test_CreateSellerAccount(t *testing.T) {
 	database.ConnectDB()
 	db := database.DB
 	testUser := new(models.Seller)
-	db.Exec("delete from sellers where email = ? returning *;", (*testInputs)[0].Email).Scan(&testUser)
+	err := db.Raw("delete from sellers where email = ? returning *;", (*testInputs)[0].Email).Scan(&testUser).Error
 
-	if testUser == nil {
+	if testUser == nil && err != nil {
 		t.Error("failed to delete test user signup details")
 	}
+
 }

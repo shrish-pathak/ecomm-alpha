@@ -24,6 +24,7 @@ import (
 // @host localhost:5000
 // @BasePath /swagger/
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	app := fiber.New()
 	app.Use(recover.New())
 	database.ConnectDB()
