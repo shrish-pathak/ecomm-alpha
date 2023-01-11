@@ -11,7 +11,7 @@ import (
 
 func Test_CreateStore(t *testing.T) {
 	testInputs := prepareCreateStoreTestInputs()
-	for _, testInput := range *testInputs {
+	for caseNum, testInput := range *testInputs {
 		t.Run(testInput.Description, func(t *testing.T) {
 			store := testInput.Store
 			storeByte, err := json.Marshal(store)
@@ -36,6 +36,14 @@ func Test_CreateStore(t *testing.T) {
 				t.Error("wrong status code")
 				t.Error("expected: ", testInput.ExpectedResponseStatusCode)
 				t.Error("got: ", statusCode)
+				return
+			}
+
+			if caseNum == 0 {
+				if testInput.ExpectedResponseBody["success"] != res.(map[string]interface{})["success"].(bool) {
+					t.Error("success false")
+					t.Error("got: ", res)
+				}
 				return
 			}
 

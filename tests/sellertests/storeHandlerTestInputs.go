@@ -60,7 +60,7 @@ func prepareCreateStoreTestInputs() *[]CreateStoreTestInput {
 	testInputs[3].Store.Description = "potions"
 	testInputs[3].RequestRoutePath = "/store/"
 	testInputs[3].RequestMethod = "POST"
-	testInputs[3].RequestHeaders = []map[string]string{{"Content-Type": "application/json", "Authorization": "Bearer " + token}}
+	testInputs[3].RequestHeaders = []map[string]string{{"Content-Type": "application/text", "Authorization": "Bearer " + token}}
 	testInputs[3].ExpectedResponseStatusCode = 422
 	testInputs[3].ExpectedResponseBody = make(map[string]interface{})
 	testInputs[3].ExpectedResponseBody["success"] = false
@@ -73,10 +73,10 @@ func prepareCreateStoreTestInputs() *[]CreateStoreTestInput {
 	testInputs[4].RequestRoutePath = "/store/"
 	testInputs[4].RequestMethod = "POST"
 	testInputs[4].RequestHeaders = []map[string]string{{"Content-Type": "application/json"}}
-	testInputs[4].ExpectedResponseStatusCode = 401
+	testInputs[4].ExpectedResponseStatusCode = 400
 	testInputs[4].ExpectedResponseBody = make(map[string]interface{})
 	testInputs[4].ExpectedResponseBody["success"] = false
-	testInputs[4].ExpectedResponseBody["message"] = ""
+	testInputs[4].ExpectedResponseBody["message"] = "Missing or malformed JWT"
 	testInputs[4].ExpectedResponseBody["data"] = nil
 
 	return &testInputs

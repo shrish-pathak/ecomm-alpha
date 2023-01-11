@@ -22,6 +22,19 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
+// SellerLogin does the login
+//
+//	@Summary		Login seller
+//	@Description	Login seller
+//	@Tags
+//	@Accept			json
+//	@Produce		json
+//	@Param			store body SellerCredentials true "Login Seller"
+//	@Success		200	{object}	ResponseHTTP{data=string}
+//	Failure			400	{object}	ResponseHTTP{}
+//	Failure			422	{object}	ResponseHTTP{}
+//	Failure			500	{object}	ResponseHTTP{}
+//	@Router			/api/v1/seller/login [post]
 func SellerLogin(c *fiber.Ctx) error {
 
 	sellerCredentials := new(SellerCredentials)
