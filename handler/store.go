@@ -77,7 +77,7 @@ func UpdateStore(c *fiber.Ctx) error {
 	}
 
 	if ok, errorFields := validateStoreInput(store); ok != true {
-		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
 	}
 
 	// log.Println(store)
@@ -86,10 +86,10 @@ func UpdateStore(c *fiber.Ctx) error {
 	err := db.Raw("update store set name=?,description=? where id =? returning id;", store.Name, store.Description, store.ID).Scan(&storeId).Error
 	if err != nil {
 		log.Println(err)
-		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 
-	return c.Status(201).JSON(ResponseHTTP{Success: true, Message: "", Data: storeId})
+	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: storeId})
 }
 
 // PatchStoreName updates the name of store
@@ -129,9 +129,9 @@ func PatchStoreName(c *fiber.Ctx) error {
 	log.Println(store)
 
 	if err != nil {
-		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
-	return c.Status(200).JSON(ResponseHTTP{Success: true, Message: "", Data: storeId})
+	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: storeId})
 }
 
 // PatchStoreDescription updates description of store
@@ -170,8 +170,8 @@ func PatchStoreDescription(c *fiber.Ctx) error {
 	err := db.Raw("update store set description=?,where id=? returning id", store.Description, store.ID).Scan(&storeId).Error
 
 	if err != nil {
-		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 
-	return c.JSON(ResponseHTTP{Success: true, Message: "", Data: store})
+	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: store})
 }
