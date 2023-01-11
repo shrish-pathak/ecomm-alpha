@@ -4,6 +4,7 @@ import (
 	"ecomm-alpha/models"
 	"net/mail"
 	"reflect"
+	"regexp"
 )
 
 func isEmail(email string) bool {
@@ -65,6 +66,33 @@ func validateSellerLoginInput(sc *SellerCredentials) (bool, []string) {
 	return true, errorFields
 }
 
+func validateAddressInput(address *models.Address) (bool, []string) {
+	errorFields := []string{}
+	validNum := regexp.MustCompile("(0|91)?[6-9][0-9]{9}")
+	if !validNum.MatchString(address.Mobile_No) {
+		errorFields = append(errorFields, "mobile num")
+	}
+	if address.City == "" {
+		errorFields = append(errorFields, "city")
+	}
+	if address.State == "" {
+		errorFields = append(errorFields, "state")
+	}
+	if address.Country_Code == "" {
+		errorFields = append(errorFields, "country code")
+	}
+	if address.Country == "" {
+		errorFields = append(errorFields, "country")
+	}
+	if address.Address == "" {
+		errorFields = append(errorFields, "address")
+	}
+
+	if len(errorFields) > 0 {
+		return false, errorFields
+	}
+	return true, errorFields
+}
 func GetStatusCodeFromError(err error) int {
 	var statusCode int
 	val := reflect.ValueOf(err).Elem()

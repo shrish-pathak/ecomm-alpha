@@ -32,23 +32,21 @@ func CreateStore(c *fiber.Ctx) error {
 	var statusCode int
 	if err := c.BodyParser(store); err != nil {
 		statusCode = GetStatusCodeFromError(err)
-		if err != nil {
-			log.Println(err)
-		}
+		log.Println(err)
 		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
 	if ok, errorFields := validateStoreInput(store); ok != true {
-		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
 	}
 
 	store.SellerID = uint(user["seller_id"].(float64))
 
 	if err := db.Create(store).Error; err != nil {
-		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
-	return c.Status(201).JSON(ResponseHTTP{Success: true, Message: "", Data: store})
+	return c.Status(fiber.StatusCreated).JSON(ResponseHTTP{Success: true, Message: "", Data: store})
 }
 
 // UpdateStore updates the store of seller

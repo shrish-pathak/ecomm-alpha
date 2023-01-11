@@ -41,14 +41,12 @@ func SellerLogin(c *fiber.Ctx) error {
 	var statusCode int
 	if err := c.BodyParser(sellerCredentials); err != nil {
 		statusCode = GetStatusCodeFromError(err)
-		if err != nil {
-			log.Println(err)
-		}
+		log.Println(err)
 		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
 	if ok, errorFields := validateSellerLoginInput(sellerCredentials); ok != true {
-		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
 	}
 
 	seller, err := getSellerByEmail(sellerCredentials.Email)
@@ -57,14 +55,7 @@ func SellerLogin(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(ResponseHTTP{Success: false, Message: "Invalid password", Data: nil})
 	}
 
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-	claims["email"] = seller.Email
-	claims["seller_id"] = seller.ID
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-
-	t, err := token.SignedString([]byte(config.Config("SECRET")))
+	t, err := createSellerToken(seller)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
@@ -80,4 +71,15 @@ func getSellerByEmail(e string) (*models.Seller, error) {
 		return seller, nil
 	}
 	return nil, err
+}
+
+func createSellerToken(seller *models.Seller) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["email"] = seller.Email
+	claims["seller_id"] = seller.ID
+	claims["user_type"] = "seller"
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	t, err := token.SignedString([]byte(config.Config("SECRET")))
+	return t, err
 }

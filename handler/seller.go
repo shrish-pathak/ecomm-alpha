@@ -1,14 +1,11 @@
 package handler
 
 import (
-	"ecomm-alpha/config"
 	"ecomm-alpha/database"
 	"ecomm-alpha/models"
 	"log"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -42,14 +39,12 @@ func CreateSellerAccount(c *fiber.Ctx) error {
 	var statusCode int
 	if err := c.BodyParser(sellerSUD); err != nil {
 		statusCode = GetStatusCodeFromError(err)
-		if err != nil {
-			log.Println(err)
-		}
+		log.Println(err)
 		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
 	if ok, errorFields := validateSellerSignUpInput(sellerSUD); ok != true {
-		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
 	}
 
 	var email string
@@ -58,35 +53,28 @@ func CreateSellerAccount(c *fiber.Ctx) error {
 
 	if err != nil {
 		log.Println(err)
-		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 	if email != "" {
-		return c.Status(400).JSON(ResponseHTTP{Success: false, Message: "user already exists", Data: nil})
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "user already exists", Data: nil})
 	}
 	hash, err := hashPassword(sellerSUD.Password)
 	if err != nil {
 		log.Println(err)
-		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 	sellerSUD.Password = hash
 
 	seller := &sellerSUD.Seller
 	if err := db.Create(seller).Error; err != nil {
 		log.Println(err)
-		return c.Status(500).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-
-	claims["email"] = seller.Email
-	claims["seller_id"] = seller.ID
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-
-	t, err := token.SignedString([]byte(config.Config("SECRET")))
+	t, err := createSellerToken(seller)
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	return c.Status(201).JSON(ResponseHTTP{Success: true, Message: "", Data: t})
+	return c.Status(fiber.StatusCreated).JSON(ResponseHTTP{Success: true, Message: "", Data: t})
 
 }
