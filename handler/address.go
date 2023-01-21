@@ -9,6 +9,19 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+// CreateAddress creates a address
+//
+//	@Summary		Register a new address data
+//	@Description	Register Address
+//	@Tags
+//	@Accept			json
+//	@Produce		json
+//	@Param			address body models.Address	true "Register address"
+//	@Success		201
+//	Failure			400	{object}	ResponseHTTP{}
+//	Failure			422	{object}	ResponseHTTP{}
+//	Failure			500	{object}	ResponseHTTP{}
+//	@Router			/api/v1/address/ [post]
 func CreateAddress(c *fiber.Ctx) error {
 	db := database.DB
 	address := new(models.Address)
@@ -40,6 +53,19 @@ func CreateAddress(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusCreated)
 }
 
+// UpdateAddress updates a address
+//
+//	@Summary		Updates address data
+//	@Description	Update Address
+//	@Tags
+//	@Accept			json
+//	@Produce		json
+//	@Param			address body models.Address	true "Update address"
+//	@Success		200 {object}	ResponseHTTP{data=string}
+//	Failure			400	{object}	ResponseHTTP{}
+//	Failure			422	{object}	ResponseHTTP{}
+//	Failure			500	{object}	ResponseHTTP{}
+//	@Router			/api/v1/address/ [put]
 func UpdateAddress(c *fiber.Ctx) error {
 	db := database.DB
 	address := new(models.Address)
@@ -65,8 +91,8 @@ func UpdateAddress(c *fiber.Ctx) error {
 	}
 
 	var addressId string
-	err := db.Raw("update address set mobile_no=?,city=?,state=?,country_code=?,country=?,address=? returning id;",
-		address.MobileNo, address.City, address.State, address.CountryCode, address.Country, address.Address).Scan(&addressId).Error
+	err := db.Raw("update address set mobile_no=?,city=?,state=?,zip=?,country=?,address=? returning id;",
+		address.MobileNo, address.City, address.State, address.Zip, address.Country, address.Address).Scan(&addressId).Error
 
 	if err != nil {
 		log.Println(err)
