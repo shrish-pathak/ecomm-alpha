@@ -1,8 +1,8 @@
-package sellertests
+package storetests
 
 import (
 	"ecomm-alpha/models"
-	"ecomm-alpha/tests/commondata"
+	"ecomm-alpha/tests/commonData"
 	"ecomm-alpha/tests/utility"
 )
 
@@ -16,7 +16,7 @@ type CreateStoreTestInput struct {
 
 func prepareCreateStoreTestInputs() *[]CreateStoreTestInput {
 
-	token := utility.Login(commondata.Seller.Email, commondata.Seller.Password)
+	token := utility.Login(commonData.Seller.Email, commonData.Seller.Password)
 
 	testInputs := make([]CreateStoreTestInput, 5)
 	testInputs[0].Description = "test with correct inputs"

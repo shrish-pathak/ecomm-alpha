@@ -1,4 +1,4 @@
-package sellertests
+package storetests
 
 import (
 	"bytes"

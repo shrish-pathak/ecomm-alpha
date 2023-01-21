@@ -18,6 +18,12 @@ func SetupRoutes(app *fiber.App) {
 	store := v1.Group("/store")
 
 	store.Post("/", middleware.Protected(), handler.CreateStore)
-	store.Put("/", handler.UpdateStore)
-	store.Patch("/", handler.UpdateStore)
+	store.Put("/", middleware.Protected(), handler.UpdateStore)
+	store.Patch("/name", middleware.Protected(), handler.PatchStoreName)
+	store.Patch("/description", middleware.Protected(), handler.PatchStoreDescription)
+
+	address := v1.Group("/address")
+
+	address.Post("/", middleware.Protected(), handler.CreateAddress)
+	address.Put("/", middleware.Protected(), handler.UpdateAddress)
 }
