@@ -1,4 +1,4 @@
-package commondata
+package commonData
 
 import (
 	"ecomm-alpha/handler"

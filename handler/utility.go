@@ -69,7 +69,7 @@ func validateSellerLoginInput(sc *SellerCredentials) (bool, []string) {
 func validateAddressInput(address *models.Address) (bool, []string) {
 	errorFields := []string{}
 	validNum := regexp.MustCompile("(0|91)?[6-9][0-9]{9}")
-	if !validNum.MatchString(address.Mobile_No) {
+	if !validNum.MatchString(address.MobileNo) {
 		errorFields = append(errorFields, "mobile num")
 	}
 	if address.City == "" {
@@ -78,7 +78,7 @@ func validateAddressInput(address *models.Address) (bool, []string) {
 	if address.State == "" {
 		errorFields = append(errorFields, "state")
 	}
-	if address.Country_Code == "" {
+	if address.CountryCode == "" {
 		errorFields = append(errorFields, "country code")
 	}
 	if address.Country == "" {
