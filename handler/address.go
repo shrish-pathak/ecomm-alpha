@@ -91,8 +91,8 @@ func UpdateAddress(c *fiber.Ctx) error {
 	}
 
 	var addressId string
-	err := db.Raw("update address set mobile_no=?,city=?,state=?,zip=?,country=?,address=? returning id;",
-		address.MobileNo, address.City, address.State, address.Zip, address.Country, address.Address).Scan(&addressId).Error
+	err := db.Raw("update address set mobile_no=?,city=?,state=?,zip=?,country=?,address=? where id=? and user_id=? returning id;",
+		address.MobileNo, address.City, address.State, address.Zip, address.Country, address.Address, address.ID, address.UserID).Scan(&addressId).Error
 
 	if err != nil {
 		log.Println(err)

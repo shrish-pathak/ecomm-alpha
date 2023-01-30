@@ -78,7 +78,7 @@ func validateAddressInput(address *models.Address) (bool, []string) {
 	if address.State == "" {
 		errorFields = append(errorFields, "state")
 	}
-	if address.CountryCode == "" {
+	if address.Zip == "" {
 		errorFields = append(errorFields, "country code")
 	}
 	if address.Country == "" {
@@ -86,6 +86,28 @@ func validateAddressInput(address *models.Address) (bool, []string) {
 	}
 	if address.Address == "" {
 		errorFields = append(errorFields, "address")
+	}
+
+	if len(errorFields) > 0 {
+		return false, errorFields
+	}
+	return true, errorFields
+}
+
+func validateProductInput(product *models.Product) (bool, []string) {
+	errorFields := []string{}
+
+	if product.Title == "" {
+		errorFields = append(errorFields, "title")
+	}
+	if product.Description == "" {
+		errorFields = append(errorFields, "description")
+	}
+	if product.Price < 0 {
+		errorFields = append(errorFields, "price")
+	}
+	if product.Discount < 0 {
+		errorFields = append(errorFields, "discount")
 	}
 
 	if len(errorFields) > 0 {
