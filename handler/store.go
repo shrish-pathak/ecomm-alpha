@@ -17,7 +17,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			store body models.Store true "Register store"
-//	@Success		200	{object}	ResponseHTTP{data=models.store}
+//	@Success		200	{object}	ResponseHTTP{data=models.Store}
 //	Failure			400	{object}	ResponseHTTP{}
 //	Failure			422	{object}	ResponseHTTP{}
 //	Failure			500	{object}	ResponseHTTP{}
@@ -104,7 +104,7 @@ func UpdateStore(c *fiber.Ctx) error {
 //	Failure			400	{object}	ResponseHTTP{}
 //	Failure			422	{object}	ResponseHTTP{}
 //	Failure			500	{object}	ResponseHTTP{}
-//	@Router			/api/v1/store/ [patch]
+//	@Router			/api/v1/store/name [patch]
 func PatchStoreName(c *fiber.Ctx) error {
 	db := database.DB
 
@@ -146,7 +146,7 @@ func PatchStoreName(c *fiber.Ctx) error {
 //	Failure			400	{object}	ResponseHTTP{}
 //	Failure			422	{object}	ResponseHTTP{}
 //	Failure			500	{object}	ResponseHTTP{}
-//	@Router			/api/v1/store/ [patch]
+//	@Router			/api/v1/store/description [patch]
 func PatchStoreDescription(c *fiber.Ctx) error {
 	db := database.DB
 

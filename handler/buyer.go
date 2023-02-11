@@ -8,42 +8,42 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type SellerSignUpDetails struct {
-	models.Seller
+type BuyerSignUpDetails struct {
+	models.Buyer
 	ConfirmPassword string `json:"confirmPassword" example:"har!@#ryp#$otter123!@#"`
 }
 
-// CreateSellerAccount creates a seller account
+// CreateBuyerAccount creates a Buyer account
 //
-//	@Summary		Register a new seller data
-//	@Description	Register seller
+//	@Summary		Register a new Buyer data
+//	@Description	Register Buyer
 //	@Tags
 //	@Accept			json
 //	@Produce		json
-//	@Param			seller body SellerSignUpDetails	true "Register seller"
+//	@Param			buyer body BuyerSignUpDetails	true "Register Buyer"
 //	@Success		200	{object}	ResponseHTTP{data=string}
 //	Failure			400	{object}	ResponseHTTP{}
 //	Failure			422	{object}	ResponseHTTP{}
 //	Failure			500	{object}	ResponseHTTP{}
-//	@Router			/api/v1/seller/signup [post]
-func CreateSellerAccount(c *fiber.Ctx) error {
+//	@Router			/api/v1/Buyer/signup [post]
+func CreateBuyerAccount(c *fiber.Ctx) error {
 	db := database.DB
 
-	sellerSUD := new(SellerSignUpDetails)
+	BuyerSUD := new(BuyerSignUpDetails)
 	var statusCode int
-	if err := c.BodyParser(sellerSUD); err != nil {
+	if err := c.BodyParser(BuyerSUD); err != nil {
 		statusCode = GetStatusCodeFromError(err)
 		log.Println(err)
 		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
-	if ok, errorFields := validateSellerSignUpInput(sellerSUD); ok != true {
+	if ok, errorFields := validateBuyerSignUpInput(BuyerSUD); ok != true {
 		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
 	}
 
 	var email string
 
-	err := db.Raw("SELECT email FROM sellers where email = ?", sellerSUD.Email).Scan(&email).Error
+	err := db.Raw("SELECT email FROM Buyers where email = ?", BuyerSUD.Email).Scan(&email).Error
 
 	if err != nil {
 		log.Println(err)
@@ -52,20 +52,20 @@ func CreateSellerAccount(c *fiber.Ctx) error {
 	if email != "" {
 		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "user already exists", Data: nil})
 	}
-	hash, err := hashPassword(sellerSUD.Password)
+	hash, err := hashPassword(BuyerSUD.Password)
 	if err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
-	sellerSUD.Password = hash
+	BuyerSUD.Password = hash
 
-	seller := &sellerSUD.Seller
-	if err := db.Create(seller).Error; err != nil {
+	Buyer := &BuyerSUD.Buyer
+	if err := db.Create(Buyer).Error; err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 
-	t, err := createSellerToken(seller)
+	t, err := createBuyerToken(Buyer)
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}

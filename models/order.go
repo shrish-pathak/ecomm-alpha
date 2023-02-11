@@ -4,16 +4,12 @@ import "gorm.io/gorm"
 
 // Order struct
 type Order struct {
-	gorm.Model `json:"-"`
-	Product    Product `json:"-"`
-	ProductID  uint    `gorm:"not null" json:"productID"`
-	Buyer      Buyer   `json:"-"`
-	BuyerID    uint    `gorm:"not null" json:"buyerID"`
-	Address    Address `json:"-"`
-	AddressID  string  `gorm:"not null" json:"address"`
-	Tax        int     `gorm:"not null" json:"tax"`
-	Quantity   int     `gorm:"not null" json:"quantity"`
-	Price      int     `gorm:"not null" json:"price"`
-	Status     int     `gorm:"not null" json:"status"`
-	Discount   int     `gorm:"not null" json:"discount"`
+	gorm.Model  `swaggerignore:"true"`
+	Buyer       Buyer   `swaggerignore:"true"`
+	BuyerID     uint    `gorm:"not null" json:"buyerID"`
+	Address     Address `swaggerignore:"true"`
+	AddressID   string  `gorm:"not null" json:"address"`
+	Tax         float32 `gorm:"not null" json:"tax"` //percent value 0-100
+	TotalAmount float64 `gorm:"not null" json:"amount"`
+	Status      uint    `gorm:"not null" json:"status"`
 }

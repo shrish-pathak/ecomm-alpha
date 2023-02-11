@@ -16,6 +16,10 @@ type SellerCredentials struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+type BuyerCredentials struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
@@ -62,6 +66,46 @@ func SellerLogin(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: t})
 }
 
+// BuyerLogin does the login
+//
+//	@Summary		Login Buyer
+//	@Description	Login Buyer
+//	@Tags
+//	@Accept			json
+//	@Produce		json
+//	@Param			store body BuyerCredentials true "Login Buyer"
+//	@Success		200	{object}	ResponseHTTP{data=string}
+//	Failure			400	{object}	ResponseHTTP{}
+//	Failure			422	{object}	ResponseHTTP{}
+//	Failure			500	{object}	ResponseHTTP{}
+//	@Router			/api/v1/buyer/login [post]
+func BuyerLogin(c *fiber.Ctx) error {
+
+	BuyerCredentials := new(BuyerCredentials)
+	var statusCode int
+	if err := c.BodyParser(BuyerCredentials); err != nil {
+		statusCode = GetStatusCodeFromError(err)
+		log.Println(err)
+		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
+	}
+
+	if ok, errorFields := validateBuyerLoginInput(BuyerCredentials); ok != true {
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
+	}
+
+	Buyer, err := getBuyerByEmail(BuyerCredentials.Email)
+
+	if !CheckPasswordHash(BuyerCredentials.Password, Buyer.Password) {
+		return c.Status(fiber.StatusUnauthorized).JSON(ResponseHTTP{Success: false, Message: "Invalid password", Data: nil})
+	}
+
+	t, err := createBuyerToken(Buyer)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+	}
+	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: t})
+}
+
 func getSellerByEmail(e string) (*models.Seller, error) {
 	db := database.DB
 	seller := new(models.Seller)
@@ -72,6 +116,16 @@ func getSellerByEmail(e string) (*models.Seller, error) {
 	}
 	return nil, err
 }
+func getBuyerByEmail(e string) (*models.Buyer, error) {
+	db := database.DB
+	buyer := new(models.Buyer)
+	err := db.Raw("select * from buyers where email=?", e).Scan(&buyer).Error
+
+	if buyer != nil {
+		return buyer, nil
+	}
+	return nil, err
+}
 
 func createSellerToken(seller *models.Seller) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -79,6 +133,16 @@ func createSellerToken(seller *models.Seller) (string, error) {
 	claims["email"] = seller.Email
 	claims["seller_id"] = seller.ID
 	claims["user_type"] = "seller"
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	t, err := token.SignedString([]byte(config.Config("SECRET")))
+	return t, err
+}
+func createBuyerToken(buyer *models.Buyer) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["email"] = buyer.Email
+	claims["buyer_id"] = buyer.ID
+	claims["user_type"] = "buyer"
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	t, err := token.SignedString([]byte(config.Config("SECRET")))
 	return t, err

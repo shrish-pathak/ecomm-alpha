@@ -5,6 +5,8 @@ import (
 	"net/mail"
 	"reflect"
 	"regexp"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func isEmail(email string) bool {
@@ -13,6 +15,27 @@ func isEmail(email string) bool {
 }
 
 func validateSellerSignUpInput(ssd *SellerSignUpDetails) (bool, []string) {
+	errorFields := []string{}
+
+	if ssd.ConfirmPassword != ssd.Password {
+		errorFields = append(errorFields, "confirmPassword")
+	}
+	if isEmail(ssd.Email) == false {
+		errorFields = append(errorFields, "email")
+	}
+	if ssd.FullName == "" {
+		errorFields = append(errorFields, "fullName")
+	}
+	if ssd.Password == "" || len(ssd.Password) < 6 {
+		errorFields = append(errorFields, "password")
+	}
+
+	if len(errorFields) > 0 {
+		return false, errorFields
+	}
+	return true, errorFields
+}
+func validateBuyerSignUpInput(ssd *BuyerSignUpDetails) (bool, []string) {
 	errorFields := []string{}
 
 	if ssd.ConfirmPassword != ssd.Password {
@@ -51,6 +74,21 @@ func validateStoreInput(s *models.Store) (bool, []string) {
 }
 
 func validateSellerLoginInput(sc *SellerCredentials) (bool, []string) {
+	errorFields := []string{}
+
+	if isEmail(sc.Email) == false {
+		errorFields = append(errorFields, "email")
+	}
+	if sc.Password == "" {
+		errorFields = append(errorFields, "password")
+	}
+
+	if len(errorFields) > 0 {
+		return false, errorFields
+	}
+	return true, errorFields
+}
+func validateBuyerLoginInput(sc *BuyerCredentials) (bool, []string) {
 	errorFields := []string{}
 
 	if isEmail(sc.Email) == false {
@@ -132,4 +170,9 @@ func GetStatusCodeFromError(err error) int {
 		statusCode = 400
 	}
 	return statusCode
+}
+
+func hashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
 }

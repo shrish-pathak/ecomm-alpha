@@ -15,6 +15,10 @@ func SetupRoutes(app *fiber.App) {
 	seller.Post("/signup", handler.CreateSellerAccount)
 	seller.Post("/login", handler.SellerLogin)
 
+	buyer := v1.Group("/buyer")
+	buyer.Post("/signup", handler.CreateBuyerAccount)
+	buyer.Post("/login", handler.BuyerLogin)
+
 	store := v1.Group("/store")
 
 	store.Post("/", middleware.Protected(), handler.CreateStore)
@@ -26,4 +30,22 @@ func SetupRoutes(app *fiber.App) {
 
 	address.Post("/", middleware.Protected(), handler.CreateAddress)
 	address.Put("/", middleware.Protected(), handler.UpdateAddress)
+
+	product := v1.Group("/product")
+	product.Post("/", middleware.Protected(), handler.CreateProduct)
+	product.Put("/", middleware.Protected(), handler.UpdateProduct)
+
+	cart := v1.Group("/cart")
+
+	cart.Get("/", middleware.Protected(), handler.GetCartItems)
+	cart.Post("/", middleware.Protected(), handler.AddToCart)
+	cart.Post("/", middleware.Protected(), handler.UpdateCartItem)
+	cart.Delete("/", middleware.Protected(), handler.RemoveFromCart)
+
+	order := v1.Group("/order")
+	order.Post("/", middleware.Protected(), handler.PlaceOrder)
+	order.Post("/cancel", middleware.Protected(), handler.CancelOrder)
+	order.Post("/status", middleware.Protected(), handler.GetOrderStatus)
+	order.Patch("/status", middleware.Protected(), handler.UpdateOrderStatus)
+
 }
