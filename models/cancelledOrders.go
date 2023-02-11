@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 // Cancelled Order struct
 type CancelledOrder struct {
-	gorm.Model `swaggerignore:"true"`
-	Order      *Order `swaggerignore:"true"`
-	OrderId    uint   `gorm:"not null" json:"orderID"`
+	gorm.Model
+	Order   *Order `json:"order"`
+	OrderId uint   `gorm:"not null" json:"orderID"`
 }

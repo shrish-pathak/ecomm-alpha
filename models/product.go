@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 // Product struct
 type Product struct {
-	gorm.Model        `swaggerignore:"true"`
-	Store             *Store  `swaggerignore:"true"`
+	gorm.Model
+	Store             *Store  `json:"store"`
 	StoreID           uint    `gorm:"not null" json:"storeID"`
 	Title             string  `gorm:"not null" json:"title"`
 	Description       string  `gorm:"not null" json:"description"`
