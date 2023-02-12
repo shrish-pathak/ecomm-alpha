@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 // AddToCart creates a new cart item
@@ -38,9 +39,9 @@ func AddToCart(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "invalid quantity", Data: nil})
 	}
 
-	userId := uint(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(float64))
+	userId := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string)
 
-	cartItemEntry.BuyerID = userId
+	cartItemEntry.BuyerID = uuid.MustParse(userId)
 
 	if getAvailableQuantity(cartItemEntry.ProductID) > cartItemEntry.Quantity {
 		if err := db.Create(cartItemEntry).Error; err != nil {
@@ -72,7 +73,7 @@ func AddToCart(c *fiber.Ctx) error {
 //	@Router			/api/v1/cart/ [get]
 func GetCartItems(c *fiber.Ctx) error {
 
-	userId := uint(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(float64))
+	userId := uuid.MustParse(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string))
 
 	cartItems, err := getBuyerCartItems(userId)
 
@@ -110,9 +111,9 @@ func UpdateCartItem(c *fiber.Ctx) error {
 		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
-	userId := uint(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(float64))
+	userId := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string)
 
-	cartItemEntry.BuyerID = userId
+	cartItemEntry.BuyerID = uuid.MustParse(userId)
 
 	if cartItemEntry.Quantity > 0 == false {
 		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "invalid quantity", Data: nil})
@@ -184,7 +185,7 @@ func RemoveFromCart(c *fiber.Ctx) error {
 		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
-	userId := uint(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(float64))
+	userId := uuid.MustParse(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string))
 
 	cartItemEntry.BuyerID = userId
 
@@ -207,7 +208,7 @@ func RemoveFromCart(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func getAvailableQuantity(productId uint) uint {
+func getAvailableQuantity(productId uuid.UUID) uint {
 
 	db := database.DB
 
@@ -221,13 +222,11 @@ func getAvailableQuantity(productId uint) uint {
 	return availableQuantity
 }
 
-func getBuyerCartItems(buyerId uint) (*[]models.CartItem, error) {
+func getBuyerCartItems(buyerId uuid.UUID) (*[]models.CartItem, error) {
 	db := database.DB
 
 	cartItems := new([]models.CartItem)
-	// cartItems := new(interface{})
 
-	// err := db.Raw("select * from cart_items as c_itm join products as p on p.id=c_itm.product_id where buyer_id=?", buyerId).Preload("Products").Find(&cartItems).Error
 	err := db.Model(models.CartItem{}).Where("buyer_id=?", buyerId).Preload("Product").Find(&cartItems).Error
 
 	if err != nil {
@@ -238,7 +237,7 @@ func getBuyerCartItems(buyerId uint) (*[]models.CartItem, error) {
 	return cartItems, nil
 }
 
-func emptyBuyerCart(buyerId uint) error {
+func emptyBuyerCart(buyerId uuid.UUID) error {
 	db := database.DB
 
 	cartItemIds := new(string)
@@ -247,7 +246,7 @@ func emptyBuyerCart(buyerId uint) error {
 	log.Println(cartItemIds)
 	return err
 }
-func updateProductAvailableQuantity(productId uint, quantity int) error {
+func updateProductAvailableQuantity(productId uuid.UUID, quantity int) error {
 	db := database.DB
 
 	var pid string

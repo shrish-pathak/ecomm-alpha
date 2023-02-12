@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 type OrderStatus struct {
@@ -35,7 +36,7 @@ func PlaceOrder(c *fiber.Ctx) error {
 		-create orderItem entries,
 		-delete all cart items for user
 	*/
-	buyerId := uint(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(float64))
+	buyerId := uuid.MustParse(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string))
 
 	cartItems, err := getBuyerCartItems(buyerId)
 
@@ -183,7 +184,7 @@ func UpdateOrderStatus(c *fiber.Ctx) error {
 		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
-	buyerId := uint(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(float64))
+	buyerId := uuid.MustParse(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string))
 
 	var orderId string
 	err := db.Raw("update orders set status=? where order_id=? and buyer_id=? returning id", order.Status, order.ID, buyerId).Scan(&orderId).Error

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 // CreateStore creates a store for seller
@@ -40,10 +41,10 @@ func CreateStore(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(ResponseHTTP{Success: false, Message: "validation error", Data: errorFields})
 	}
 
-	store.SellerID = uint(user["seller_id"].(float64))
+	store.SellerID = uuid.MustParse(user["seller_id"].(string))
 
 	if err := db.Create(store).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(ResponseHTTP{Success: true, Message: "", Data: store})

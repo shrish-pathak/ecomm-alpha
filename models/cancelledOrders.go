@@ -1,10 +1,14 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 // Cancelled Order struct
 type CancelledOrder struct {
 	gorm.Model
-	Order   *Order `json:"order"`
-	OrderId uint   `gorm:"not null" json:"orderID"`
+	ID      uuid.UUID `gorm:"primary_key;type:uuid;default:uuid_generate_v4()" json:"id"`
+	Order   *Order    `json:"order"`
+	OrderId uint      `gorm:"not null" json:"orderID"`
 }

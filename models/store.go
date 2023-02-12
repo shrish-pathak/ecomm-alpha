@@ -1,12 +1,16 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 // Store struct
 type Store struct {
 	gorm.Model
-	Seller      *Seller `json:"seller"`
-	SellerID    uint    `gorm:"not null" json:"sellerID"`
-	Name        string  `gorm:"not null" json:"name"`
-	Description string  `gorm:"not null" json:"description"`
+	ID          uuid.UUID `gorm:"primary_key;type:uuid;default:uuid_generate_v4()" json:"id"`
+	Seller      *Seller   `json:"seller"`
+	SellerID    uuid.UUID `gorm:"not null;type:uuid" json:"sellerID"`
+	Name        string    `gorm:"not null" json:"name"`
+	Description string    `gorm:"not null" json:"description"`
 }

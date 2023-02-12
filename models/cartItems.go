@@ -1,13 +1,17 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 // Cart struct
 type CartItem struct {
 	gorm.Model
-	Product   *Product `json:"product"`
-	ProductID uint     `gorm:"not null" json:"productID"`
-	Buyer     *Buyer   `json:"buyer"`
-	BuyerID   uint     `gorm:"not null" json:"buyerID"`
-	Quantity  uint     `json:"quantity"`
+	ID        uuid.UUID `gorm:"primary_key;type:uuid;default:uuid_generate_v4()" json:"id"`
+	Product   *Product  `json:"product"`
+	ProductID uuid.UUID `gorm:"not null;type:uuid" json:"productID"`
+	Buyer     *Buyer    `json:"buyer"`
+	BuyerID   uuid.UUID `gorm:"not null;type:uuid" json:"buyerID"`
+	Quantity  uint      `json:"quantity"`
 }

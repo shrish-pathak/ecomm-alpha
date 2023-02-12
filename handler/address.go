@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 // CreateAddress creates a address
@@ -40,10 +41,10 @@ func CreateAddress(c *fiber.Ctx) error {
 	}
 
 	if user["user_type"] == "seller" {
-		address.UserID = uint(user["seller_id"].(float64))
+		address.UserID = uuid.MustParse(user["seller_id"].(string))
 	}
 	if user["user_type"] == "buyer" {
-		address.UserID = uint(user["buyer_id"].(float64))
+		address.UserID = uuid.MustParse(user["buyer_id"].(string))
 	}
 
 	if err := db.Create(address).Error; err != nil {
@@ -84,10 +85,10 @@ func UpdateAddress(c *fiber.Ctx) error {
 	}
 
 	if user["user_type"] == "seller" {
-		address.UserID = uint(user["seller_id"].(float64))
+		address.UserID = uuid.MustParse(user["seller_id"].(string))
 	}
 	if user["user_type"] == "buyer" {
-		address.UserID = uint(user["buyer_id"].(float64))
+		address.UserID = uuid.MustParse(user["buyer_id"].(string))
 	}
 
 	var addressId string
