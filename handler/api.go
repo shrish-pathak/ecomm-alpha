@@ -1,6 +1,8 @@
 package handler
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+)
 
 type ResponseHTTP struct {
 	Success bool        `json:"success"`

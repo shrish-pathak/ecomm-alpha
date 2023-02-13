@@ -214,7 +214,7 @@ func getAvailableQuantity(productId uuid.UUID) uint {
 
 	var availableQuantity uint
 
-	err := db.Raw("select available_quantity from products where id=?", productId).Scan(availableQuantity).Error
+	err := db.Raw("select available_quantity from products where id=?", productId).Scan(&availableQuantity).Error
 	if err != nil {
 		log.Println(err)
 	}

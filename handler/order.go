@@ -12,7 +12,7 @@ import (
 
 type OrderStatus struct {
 	models.Order
-	models.CancelledOrder
+	CancelledOrderID *uuid.UUID `json:"cancelledOrderID"`
 }
 
 // PlaceOrder creates a new order
@@ -29,13 +29,7 @@ type OrderStatus struct {
 //	Failure			500	{object}	ResponseHTTP{}
 //	@Router			/api/v1/order/ [post]
 func PlaceOrder(c *fiber.Ctx) error {
-	/*
-		-get all cart items,
-		-prepare all order field values from cart items,
-		-create order
-		-create orderItem entries,
-		-delete all cart items for user
-	*/
+
 	buyerId := uuid.MustParse(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string))
 
 	cartItems, err := getBuyerCartItems(buyerId)
@@ -149,7 +143,10 @@ func GetOrderStatus(c *fiber.Ctx) error {
 	}
 
 	t1 := new(OrderStatus)
-	err := db.Raw("select * from orders as o left join cancel_order as co on o.id=co.order_id where id=?", order.ID).Scan(t1).Error
+
+	err := db.Table("orders").Select("orders.*, cancelled_orders.id as cancelled_order_id").
+		Joins("left join cancelled_orders on orders.id = cancelled_orders.order_id").Where("orders.id=?", order.ID).
+		Scan(t1).Error
 
 	if err != nil {
 		log.Println(err)
