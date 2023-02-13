@@ -136,7 +136,7 @@ func CancelOrder(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			order body models.Order true "Get order status"
-//	@Success		201
+//	@Success		200 {object}	ResponseHTTP{data=OrderStatus}
 //	Failure			400	{object}	ResponseHTTP{}
 //	Failure			422	{object}	ResponseHTTP{}
 //	Failure			500	{object}	ResponseHTTP{}
