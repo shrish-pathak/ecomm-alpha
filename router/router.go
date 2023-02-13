@@ -46,6 +46,5 @@ func SetupRoutes(app *fiber.App) {
 	order.Post("/", middleware.Protected(), handler.PlaceOrder)
 	order.Post("/cancel", middleware.Protected(), handler.CancelOrder)
 	order.Post("/status", middleware.Protected(), handler.GetOrderStatus)
-	order.Patch("/status", middleware.Protected(), handler.UpdateOrderStatus)
 
 }
