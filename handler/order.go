@@ -102,6 +102,8 @@ func CancelOrder(c *fiber.Ctx) error {
 
 	cancelledOrder := new(models.CancelledOrder)
 
+	buyerId := uuid.MustParse(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string))
+
 	var statusCode int
 	if err := c.BodyParser(cancelledOrder); err != nil {
 		statusCode = GetStatusCodeFromError(err)
@@ -109,12 +111,21 @@ func CancelOrder(c *fiber.Ctx) error {
 		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
 	}
 
-	if err := db.Create(cancelledOrder).Error; err != nil {
+	order := new(models.Order)
+	err := db.Raw("select * from orders where id=? and buyer_id=?", cancelledOrder.OrderId, buyerId).Scan(order).Error
+	if err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
+	if order != nil {
+		if err := db.Create(cancelledOrder).Error; err != nil {
+			log.Println(err)
+			return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
+		}
+		return c.SendStatus(fiber.StatusCreated)
+	}
 
-	return c.SendStatus(fiber.StatusCreated)
+	return c.SendStatus(fiber.StatusBadRequest)
 }
 
 // GetOrderStatus shows order status
@@ -131,45 +142,7 @@ func CancelOrder(c *fiber.Ctx) error {
 //	Failure			500	{object}	ResponseHTTP{}
 //	@Router			/api/v1/order/status [post]
 func GetOrderStatus(c *fiber.Ctx) error {
-	db := database.DB
 
-	order := new(models.Order)
-
-	var statusCode int
-	if err := c.BodyParser(order); err != nil {
-		statusCode = GetStatusCodeFromError(err)
-		log.Println(err)
-		return c.Status(statusCode).JSON(ResponseHTTP{Success: false, Message: err.Error(), Data: nil})
-	}
-
-	t1 := new(OrderStatus)
-
-	err := db.Table("orders").Select("orders.*, cancelled_orders.id as cancelled_order_id").
-		Joins("left join cancelled_orders on orders.id = cancelled_orders.order_id").Where("orders.id=?", order.ID).
-		Scan(t1).Error
-
-	if err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: t1})
-}
-
-// UpdateOrder updates order
-//
-//	@Summary		Update order data
-//	@Description	Update order
-//	@Tags
-//	@Accept			json
-//	@Produce		json
-//	@Param			order body models.Order true "Update order"
-//	@Success		200
-//	Failure			400	{object}	ResponseHTTP{}
-//	Failure			422	{object}	ResponseHTTP{}
-//	Failure			500	{object}	ResponseHTTP{}
-//	@Router			/api/v1/order/status [patch]
-func UpdateOrderStatus(c *fiber.Ctx) error {
 	db := database.DB
 
 	order := new(models.Order)
@@ -183,13 +156,20 @@ func UpdateOrderStatus(c *fiber.Ctx) error {
 
 	buyerId := uuid.MustParse(c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["buyer_id"].(string))
 
-	var orderId string
-	err := db.Raw("update orders set status=? where order_id=? and buyer_id=? returning id", order.Status, order.ID, buyerId).Scan(&orderId).Error
+	t1 := new(OrderStatus)
+
+	err := db.Table("orders").Select("orders.*, cancelled_orders.id as cancelled_order_id").
+		Joins("left join cancelled_orders on orders.id = cancelled_orders.order_id").Where("orders.id=? and order.buyer_id=?", order.ID, buyerId).
+		Scan(t1).Error
 
 	if err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: t1})
 }
+
+// func UpdateOrderStatus()  {
+//Note: System will update order status when integrated with delivery system.
+// }
