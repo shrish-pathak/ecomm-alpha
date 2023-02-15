@@ -117,7 +117,7 @@ func validateAddressInput(address *models.Address) (bool, []string) {
 		errorFields = append(errorFields, "state")
 	}
 	if address.Zip == "" {
-		errorFields = append(errorFields, "country code")
+		errorFields = append(errorFields, "zip")
 	}
 	if address.Country == "" {
 		errorFields = append(errorFields, "country")
@@ -146,6 +146,9 @@ func validateProductInput(product *models.Product) (bool, []string) {
 	}
 	if product.Discount < 0 {
 		errorFields = append(errorFields, "discount")
+	}
+	if product.AvailableQuantity < 1 {
+		errorFields = append(errorFields, "availableQuantity")
 	}
 
 	if len(errorFields) > 0 {

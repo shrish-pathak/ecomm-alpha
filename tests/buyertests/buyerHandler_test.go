@@ -1,4 +1,4 @@
-package sellertests
+package buyertests
 
 import (
 	"bytes"
@@ -16,16 +16,16 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func Test_CreateSellerAccount(t *testing.T) {
-	testInputs := prepareCreateSellerAccountTestInputs()
+func Test_CreateBuyerAccount(t *testing.T) {
+	testInputs := prepareCreateBuyerAccountTestInputs()
 	for caseNum, testInput := range *testInputs {
 		t.Run(testInput.Description, func(t *testing.T) {
-			sellerSignUpDetails := testInput.SellerSignUpDetails
-			sellerSUDByte, err := json.Marshal(sellerSignUpDetails)
+			BuyerSignUpDetails := testInput.BuyerSignUpDetails
+			BuyerSUDByte, err := json.Marshal(BuyerSignUpDetails)
 			if err != nil {
 				t.Error(err)
 			}
-			payload := bytes.NewBuffer(sellerSUDByte)
+			payload := bytes.NewBuffer(BuyerSUDByte)
 			req, err := http.NewRequest("POST", utility.BaseUrl+testInput.RequestRoutePath, payload)
 			for _, header := range testInput.RequestHeaders {
 				for k, v := range header {
@@ -73,7 +73,7 @@ func Test_CreateSellerAccount(t *testing.T) {
 
 	database.ConnectDB()
 	db := database.DB
-	testUser := new(models.Seller)
+	testUser := new(models.Buyer)
 	err := db.Raw("delete from sellers where email = ? returning *;", (*testInputs)[0].Email).Scan(&testUser).Error
 
 	if testUser == nil && err != nil {
