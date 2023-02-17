@@ -38,11 +38,11 @@ func prepareCreateBuyerAccountTestInputs() *[]CreateBuyerAccountTestInput {
 	testInputs[1].RequestRoutePath = "/buyer/signup"
 	testInputs[1].RequestMethod = "POST"
 	testInputs[1].RequestHeaders = []map[string]string{{"Content-Type": "application/json"}}
-	testInputs[1].ExpectedResponseStatusCode = 201
+	testInputs[1].ExpectedResponseStatusCode = 400
 	testInputs[1].ExpectedResponseBody = make(map[string]interface{})
 	testInputs[1].ExpectedResponseBody["success"] = false
 	testInputs[1].ExpectedResponseBody["message"] = "validation error"
-	testInputs[1].ExpectedResponseBody["data"] = []string{"confirmPassword", "email", "fullName", "password"}
+	testInputs[1].ExpectedResponseBody["data"] = []interface{}{"email", "fullName", "password"}
 
 	return &testInputs
 }

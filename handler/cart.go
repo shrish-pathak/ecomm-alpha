@@ -82,8 +82,6 @@ func GetCartItems(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ResponseHTTP{Success: false, Message: "Internal Server Error", Data: nil})
 	}
 
-	type CartItems struct {
-	}
 	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: cartItems})
 }
 
@@ -189,7 +187,6 @@ func RemoveFromCart(c *fiber.Ctx) error {
 
 	cartItemEntry.BuyerID = userId
 
-	//Todo: implement new logic based on quantity
 	var cartItemId string
 	err := db.Raw("delete from cart_items where id=? and buyer_id=?", cartItemEntry.ID, cartItemEntry.BuyerID).Scan(&cartItemId).Error
 

@@ -25,6 +25,7 @@ import (
 func CreateProduct(c *fiber.Ctx) error {
 	db := database.DB
 
+	//TODO: add check for seller id exist in given store id and then create product for that
 	product := new(models.Product)
 	var statusCode int
 	if err := c.BodyParser(product); err != nil {

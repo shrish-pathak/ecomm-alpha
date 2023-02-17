@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func Login(email, password string) string {
+func Login(email, password, routePath string) string {
 	client := new(http.Client)
 
 	loginData := map[string]string{
@@ -20,7 +20,7 @@ func Login(email, password string) string {
 		log.Println(err)
 	}
 	payload := bytes.NewBuffer(LDBytes)
-	req, err := http.NewRequest("POST", BaseUrl+"/seller/login", payload)
+	req, err := http.NewRequest("POST", BaseUrl+routePath, payload)
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {
 		log.Println(err)
@@ -44,5 +44,9 @@ func Login(email, password string) string {
 		log.Println(err)
 	}
 
-	return data["data"].(string)
+	if data["data"] != nil {
+		return data["data"].(string)
+	}
+	log.Println("no token")
+	return ""
 }

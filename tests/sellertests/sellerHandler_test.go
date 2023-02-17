@@ -26,7 +26,7 @@ func Test_CreateSellerAccount(t *testing.T) {
 				t.Error(err)
 			}
 			payload := bytes.NewBuffer(sellerSUDByte)
-			req, err := http.NewRequest("POST", utility.BaseUrl+testInput.RequestRoutePath, payload)
+			req, err := http.NewRequest(testInput.RequestMethod, utility.BaseUrl+testInput.RequestRoutePath, payload)
 			for _, header := range testInput.RequestHeaders {
 				for k, v := range header {
 					req.Header.Set(k, v)

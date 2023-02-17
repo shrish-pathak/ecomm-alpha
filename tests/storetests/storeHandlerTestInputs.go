@@ -16,7 +16,7 @@ type CreateStoreTestInput struct {
 
 func prepareCreateStoreTestInputs() *[]CreateStoreTestInput {
 
-	token := utility.Login(commonData.Seller.Email, commonData.Seller.Password)
+	token := utility.Login(commonData.Seller.Email, commonData.Seller.Password, "/seller/login")
 
 	testInputs := make([]CreateStoreTestInput, 5)
 	testInputs[0].Description = "test with correct inputs"

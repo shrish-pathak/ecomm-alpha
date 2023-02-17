@@ -1,4 +1,4 @@
-package producttests
+package carttests
 
 import (
 	"bytes"
@@ -9,18 +9,20 @@ import (
 	"testing"
 )
 
-func Test_CreateProduct(t *testing.T) {
-	testInputs := prepareCreateProductTestInputs()
+func Test_AddToCart(t *testing.T) {
+	testInputs := prepareAddToCartTestInputs()
 
 	for caseNum, testInput := range *testInputs {
 		t.Run(testInput.Description, func(t *testing.T) {
-			product := testInput.Product
-			productByte, err := json.Marshal(product)
+
+			cartItem := testInput.CartItem
+
+			cartItemByte, err := json.Marshal(cartItem)
 			if err != nil {
 				t.Error(err)
 			}
+			payload := bytes.NewBuffer(cartItemByte)
 
-			payload := bytes.NewBuffer(productByte)
 			req, err := http.NewRequest(testInput.RequestMethod, utility.BaseUrl+testInput.RequestRoutePath, payload)
 
 			for _, header := range testInput.RequestHeaders {
@@ -28,7 +30,6 @@ func Test_CreateProduct(t *testing.T) {
 					req.Header.Set(k, v)
 				}
 			}
-
 			if err != nil {
 				t.Error(err)
 			}
@@ -45,11 +46,11 @@ func Test_CreateProduct(t *testing.T) {
 			if caseNum == 0 {
 				return
 			}
-
 			if reflect.DeepEqual(testInput.ExpectedResponseBody, res) == false {
 				t.Error("wrong response body")
 				t.Error("expected: ", testInput.ExpectedResponseBody)
 				t.Error("got: ", res)
+
 			}
 		})
 	}

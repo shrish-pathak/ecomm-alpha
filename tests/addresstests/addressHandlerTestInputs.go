@@ -16,7 +16,7 @@ type CreateAddressTestInput struct {
 
 func prepareCreateAddressTestInputs() *[]CreateAddressTestInput {
 
-	token := utility.Login(commonData.Seller.Email, commonData.Seller.Password)
+	token := utility.Login(commonData.Seller.Email, commonData.Seller.Password, "/seller/login")
 
 	testInputs := make([]CreateAddressTestInput, 2)
 	testInputs[0].Description = "test with correct inputs"
@@ -43,7 +43,7 @@ func prepareCreateAddressTestInputs() *[]CreateAddressTestInput {
 	testInputs[1].RequestRoutePath = "/address/"
 	testInputs[1].RequestMethod = "POST"
 	testInputs[1].RequestHeaders = []map[string]string{{"Content-Type": "application/json", "Authorization": "Bearer " + token}}
-	testInputs[1].ExpectedResponseStatusCode = 201
+	testInputs[1].ExpectedResponseStatusCode = 400
 	testInputs[1].ExpectedResponseBody = make(map[string]interface{})
 	testInputs[1].ExpectedResponseBody["success"] = false
 	testInputs[1].ExpectedResponseBody["message"] = "validation error"

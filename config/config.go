@@ -13,7 +13,7 @@ import (
 func Config(key string) string {
 	// load .env file
 	fp, err := filepath.Abs(".env")
-	if strings.Contains(fp, "tests\\sellertests\\.env") {
+	if strings.Contains(fp, "tests\\") {
 		fp, err = filepath.Abs("../../.env")
 	}
 
