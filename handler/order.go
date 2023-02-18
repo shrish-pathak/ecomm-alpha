@@ -136,7 +136,7 @@ func CancelOrder(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			order body models.Order true "Get order status"
-//	@Success		200 {object}	ResponseHTTP{data=OrderStatus}
+//	@Success		200 {object}	ResponseHTTP{}
 //	Failure			400	{object}	ResponseHTTP{}
 //	Failure			422	{object}	ResponseHTTP{}
 //	Failure			500	{object}	ResponseHTTP{}
@@ -170,6 +170,9 @@ func GetOrderStatus(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{Success: true, Message: "", Data: t1})
 }
 
-// func UpdateOrderStatus()  {
-//Note: System will update order status when integrated with delivery system.
-// }
+/*
+ func UpdateOrderStatus()  {
+	Note: System will update order status when integrated with delivery system.
+ }
+
+*/

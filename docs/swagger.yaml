@@ -8,16 +8,6 @@ definitions:
         type: string
     type: object
   handler.BuyerSignUpDetails:
-    properties:
-      confirmPassword:
-        example: har!@#ryp#$otter123!@#
-        type: string
-      email:
-        type: string
-      fullName:
-        type: string
-      password:
-        type: string
     type: object
   handler.ResponseHTTP:
     properties:
@@ -35,91 +25,18 @@ definitions:
         type: string
     type: object
   handler.SellerSignUpDetails:
-    properties:
-      confirmPassword:
-        example: har!@#ryp#$otter123!@#
-        type: string
-      email:
-        example: harry@gmail.com
-        type: string
-      fullName:
-        example: harry potter
-        type: string
-      password:
-        example: har!@#ryp#$otter123!@#
-        type: string
     type: object
   models.Address:
-    properties:
-      address:
-        type: string
-      city:
-        type: string
-      country:
-        type: string
-      mobileNo:
-        type: string
-      state:
-        type: string
-      userID:
-        type: integer
-      zip:
-        type: string
     type: object
   models.CancelledOrder:
-    properties:
-      orderID:
-        type: integer
     type: object
   models.CartItem:
-    properties:
-      buyerID:
-        type: integer
-      product:
-        $ref: '#/definitions/models.Product'
-      productID:
-        type: integer
-      quantity:
-        type: integer
     type: object
   models.Order:
-    properties:
-      address:
-        type: string
-      amount:
-        type: number
-      buyerID:
-        type: integer
-      status:
-        type: integer
-      tax:
-        description: percent value 0-100
-        type: number
     type: object
   models.Product:
-    properties:
-      availableQuantity:
-        type: integer
-      description:
-        type: string
-      discount:
-        description: percent 0-100
-        type: number
-      price:
-        type: number
-      storeID:
-        type: integer
-      title:
-        type: string
     type: object
   models.Store:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
-      sellerID:
-        type: integer
     type: object
 host: localhost:5000
 info:
@@ -352,25 +269,6 @@ paths:
       tags:
       - ""
   /api/v1/order/status:
-    patch:
-      consumes:
-      - application/json
-      description: Update order
-      parameters:
-      - description: Update order
-        in: body
-        name: order
-        required: true
-        schema:
-          $ref: '#/definitions/models.Order'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      summary: Update order data
-      tags:
-      - ""
     post:
       consumes:
       - application/json
@@ -385,8 +283,10 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseHTTP'
       summary: Shows order status data
       tags:
       - ""

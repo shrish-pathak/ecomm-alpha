@@ -400,37 +400,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created"
-                    }
-                }
-            },
-            "patch": {
-                "description": "Update order",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    ""
-                ],
-                "summary": "Update order data",
-                "parameters": [
-                    {
-                        "description": "Update order",
-                        "name": "order",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Order"
-                        }
-                    }
-                ],
-                "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseHTTP"
+                        }
                     }
                 }
             }
@@ -710,22 +684,7 @@ const docTemplate = `{
             }
         },
         "handler.BuyerSignUpDetails": {
-            "type": "object",
-            "properties": {
-                "confirmPassword": {
-                    "type": "string",
-                    "example": "har!@#ryp#$otter123!@#"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "fullName": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "handler.ResponseHTTP": {
             "type": "object",
@@ -751,135 +710,25 @@ const docTemplate = `{
             }
         },
         "handler.SellerSignUpDetails": {
-            "type": "object",
-            "properties": {
-                "confirmPassword": {
-                    "type": "string",
-                    "example": "har!@#ryp#$otter123!@#"
-                },
-                "email": {
-                    "type": "string",
-                    "example": "harry@gmail.com"
-                },
-                "fullName": {
-                    "type": "string",
-                    "example": "harry potter"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "har!@#ryp#$otter123!@#"
-                }
-            }
+            "type": "object"
         },
         "models.Address": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "city": {
-                    "type": "string"
-                },
-                "country": {
-                    "type": "string"
-                },
-                "mobileNo": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer"
-                },
-                "zip": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "models.CancelledOrder": {
-            "type": "object",
-            "properties": {
-                "orderID": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         },
         "models.CartItem": {
-            "type": "object",
-            "properties": {
-                "buyerID": {
-                    "type": "integer"
-                },
-                "product": {
-                    "$ref": "#/definitions/models.Product"
-                },
-                "productID": {
-                    "type": "integer"
-                },
-                "quantity": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         },
         "models.Order": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "amount": {
-                    "type": "number"
-                },
-                "buyerID": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "tax": {
-                    "description": "percent value 0-100",
-                    "type": "number"
-                }
-            }
+            "type": "object"
         },
         "models.Product": {
-            "type": "object",
-            "properties": {
-                "availableQuantity": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "discount": {
-                    "description": "percent 0-100",
-                    "type": "number"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "storeID": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "models.Store": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "sellerID": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         }
     }
 }`
