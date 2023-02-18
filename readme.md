@@ -13,5 +13,12 @@ SECRET=asd
 - run command: go run main.go
 
 ## To run tests use following steps
-- for available tests, run command :  go test .\tests\sellertests\ -v
+- for available tests, run commands : 
+  go test .\tests\sellertests\ -v
+  go test .\tests\addresstests\ -v
+  go test .\tests\storetests\ -v
+  go test .\tests\producttests\ -v
+  go test .\tests\buyertests\ -v
+  go test .\tests\carttests\ -v
+  go test .\tests\ordertests\ -v
 
