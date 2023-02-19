@@ -1,4 +1,8 @@
 # ecomm-alpha
+
+## Description
+  This project is a rest api for ecommerce application written in golang with some tests  and uses gofiber, gorm, postgres, swagger docs, jwt.  
+  
 ## To run the project use following steps
 - create database first in postgres, data for running tests are also required.
 - uuid-ossp extension for postgres require. run on psql --> CREATE EXTENSION "uuid-ossp"; 
