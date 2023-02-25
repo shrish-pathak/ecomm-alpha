@@ -1,0 +1,652 @@
+basePath: /swagger/
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  handler.BuyerCredentials:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  handler.BuyerSignUpDetails:
+    properties:
+      confirmPassword:
+        example: har!@#ryp#$otter123!@#
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  handler.ResponseHTTP:
+    properties:
+      data: {}
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  handler.SellerCredentials:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  handler.SellerSignUpDetails:
+    properties:
+      confirmPassword:
+        example: har!@#ryp#$otter123!@#
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        example: harry@gmail.com
+        type: string
+      fullName:
+        example: harry potter
+        type: string
+      id:
+        type: string
+      password:
+        example: har!@#ryp#$otter123!@#
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.Address:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: string
+      mobileNo:
+        type: string
+      state:
+        type: string
+      updatedAt:
+        type: string
+      userID:
+        type: string
+      zip:
+        type: string
+    type: object
+  models.Buyer:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.CancelledOrder:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: string
+      order:
+        $ref: '#/definitions/models.Order'
+      orderID:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.CartItem:
+    properties:
+      buyer:
+        $ref: '#/definitions/models.Buyer'
+      buyerID:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: string
+      product:
+        $ref: '#/definitions/models.Product'
+      productID:
+        type: string
+      quantity:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.Order:
+    properties:
+      address:
+        $ref: '#/definitions/models.Address'
+      addressID:
+        type: string
+      amount:
+        type: number
+      buyer:
+        $ref: '#/definitions/models.Buyer'
+      buyerID:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: string
+      status:
+        type: integer
+      tax:
+        description: percent value 0-100
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  models.Product:
+    properties:
+      availableQuantity:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      discount:
+        description: percent 0-100
+        type: number
+      id:
+        type: string
+      price:
+        type: number
+      store:
+        $ref: '#/definitions/models.Store'
+      storeID:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.Seller:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        example: harry@gmail.com
+        type: string
+      fullName:
+        example: harry potter
+        type: string
+      id:
+        type: string
+      password:
+        example: har!@#ryp#$otter123!@#
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.Store:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      seller:
+        $ref: '#/definitions/models.Seller'
+      sellerID:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+host: localhost:5000
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is the documentation for Ecomm-Alpha
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Ecomm-Alpha
+  version: "1.0"
+paths:
+  /api/v1/Buyer/signup:
+    post:
+      consumes:
+      - application/json
+      description: Register Buyer
+      parameters:
+      - description: Register Buyer
+        in: body
+        name: buyer
+        required: true
+        schema:
+          $ref: '#/definitions/handler.BuyerSignUpDetails'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Register a new Buyer data
+      tags:
+      - ""
+  /api/v1/address/:
+    post:
+      consumes:
+      - application/json
+      description: Register Address
+      parameters:
+      - description: Register address
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/models.Address'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Register a new address data
+      tags:
+      - ""
+    put:
+      consumes:
+      - application/json
+      description: Update Address
+      parameters:
+      - description: Update address
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/models.Address'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Updates address data
+      tags:
+      - ""
+  /api/v1/buyer/login:
+    post:
+      consumes:
+      - application/json
+      description: Login Buyer
+      parameters:
+      - description: Login Buyer
+        in: body
+        name: store
+        required: true
+        schema:
+          $ref: '#/definitions/handler.BuyerCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Login Buyer
+      tags:
+      - ""
+  /api/v1/cart/:
+    delete:
+      consumes:
+      - application/json
+      description: Delete cart item
+      parameters:
+      - description: Delete cart item
+        in: body
+        name: cartItem
+        required: true
+        schema:
+          $ref: '#/definitions/models.CartItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete cart item data
+      tags:
+      - ""
+    get:
+      consumes:
+      - application/json
+      description: Get cart items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.CartItem'
+              type: object
+      summary: Get cart items data
+      tags:
+      - ""
+    post:
+      consumes:
+      - application/json
+      description: Register cart item
+      parameters:
+      - description: Register cart item
+        in: body
+        name: cartItem
+        required: true
+        schema:
+          $ref: '#/definitions/models.CartItem'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Register a new cart item data
+      tags:
+      - ""
+    put:
+      consumes:
+      - application/json
+      description: Update cart item
+      parameters:
+      - description: Update cart item
+        in: body
+        name: cartItem
+        required: true
+        schema:
+          $ref: '#/definitions/models.CartItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Update cart item data
+      tags:
+      - ""
+  /api/v1/order/:
+    post:
+      consumes:
+      - application/json
+      description: Register order
+      parameters:
+      - description: Register order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.Order'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Register a new order data
+      tags:
+      - ""
+  /api/v1/order/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Register cancel order
+      parameters:
+      - description: Register order
+        in: body
+        name: cancelOrder
+        required: true
+        schema:
+          $ref: '#/definitions/models.CancelledOrder'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Register cancel order data
+      tags:
+      - ""
+  /api/v1/order/status:
+    post:
+      consumes:
+      - application/json
+      description: Shows order status
+      parameters:
+      - description: Get order status
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseHTTP'
+      summary: Shows order status data
+      tags:
+      - ""
+  /api/v1/product/:
+    post:
+      consumes:
+      - application/json
+      description: Register Product
+      parameters:
+      - description: Register Product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Register a new Product data
+      tags:
+      - ""
+  /api/v1/seller/login:
+    post:
+      consumes:
+      - application/json
+      description: Login seller
+      parameters:
+      - description: Login Seller
+        in: body
+        name: store
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SellerCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Login seller
+      tags:
+      - ""
+  /api/v1/seller/signup:
+    post:
+      consumes:
+      - application/json
+      description: Register seller
+      parameters:
+      - description: Register seller
+        in: body
+        name: seller
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SellerSignUpDetails'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Register a new seller data
+      tags:
+      - ""
+  /api/v1/store/:
+    post:
+      consumes:
+      - application/json
+      description: Register store
+      parameters:
+      - description: Register store
+        in: body
+        name: store
+        required: true
+        schema:
+          $ref: '#/definitions/models.Store'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Store'
+              type: object
+      summary: Register a new store data
+      tags:
+      - ""
+  /api/v1/store/description:
+    patch:
+      consumes:
+      - application/json
+      description: Update store description
+      parameters:
+      - description: update store description
+        in: body
+        name: description
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Updates the store description
+      tags:
+      - ""
+  /api/v1/store/name:
+    patch:
+      consumes:
+      - application/json
+      description: Update store name
+      parameters:
+      - description: update store name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseHTTP'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Updates the store name
+      tags:
+      - ""
+swagger: "2.0"
